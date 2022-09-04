@@ -71,9 +71,19 @@ class Utils {
   }
 
   static Future<void> makeCall(String phoneNumber) async {
-    final Uri emailLaunchUri = Uri(
+    final Uri callLaunchUri = Uri(
       scheme: 'tel',
       path: phoneNumber,
+    );
+    if (await launcher.canLaunchUrl(callLaunchUri)) {
+      await launcher.launchUrl(callLaunchUri);
+    }
+  }
+
+  static Future<void> sendEmail(String email) async {
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: email,
     );
     if (await launcher.canLaunchUrl(emailLaunchUri)) {
       await launcher.launchUrl(emailLaunchUri);

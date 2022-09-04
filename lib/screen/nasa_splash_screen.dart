@@ -61,7 +61,8 @@ class _NasaSplashScreenState extends State<NasaSplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.of(context).pushReplacementNamed("");
+      //TODO
+      // Navigator.of(context).pushReplacementNamed("");
     });
   }
 }
