@@ -70,7 +70,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  height: MediaQuery.of(context).size.height * 0.4,
+                  height: MediaQuery.of(context).size.height * 0.33,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     image: DecorationImage(

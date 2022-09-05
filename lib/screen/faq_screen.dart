@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nasa_educational_consultancy/utils/app_theme.dart';
 
 class FaqScreen extends StatelessWidget {
   static const String routeName = "/faqScreen";
@@ -23,15 +24,36 @@ class FaqScreen extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .labelLarge
-                    ?.copyWith(color: Colors.black),
+                    ?.copyWith(color: Colors.white),
               ),
-              background: Image.asset("asset/image/faq.jpg"),
+              background: Stack(
+                children: [
+                  Container(
+                    color: Colors.black54,
+                  ),
+                  SizedBox(
+                    height: double.infinity,
+                    width: double.infinity,
+                    child: Image.asset(
+                      "asset/image/faq.png",
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           SliverList(
             delegate: SliverChildBuilderDelegate(
-              (_, int index) => FaqItem(
-                faq: faqs[index],
+              (_, int index) => Padding(
+                padding: EdgeInsets.only(
+                  top: index == 0 ? 8.0 : 4.0,
+                  left: 8.0,
+                  right: 8.0,
+                  bottom: index == faqs.length - 1 ? 8.0 : 4.0,
+                ),
+                child: FaqItem(
+                  faq: faqs[index],
+                ),
               ),
               childCount: faqs.length,
             ),
@@ -73,10 +95,6 @@ class _FaqItemState extends State<FaqItem> {
         child: Card(
           elevation: 8,
           shadowColor: Colors.grey.shade400,
-          margin: const EdgeInsets.symmetric(
-            horizontal: 8.0,
-            vertical: 4.0,
-          ),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Row(

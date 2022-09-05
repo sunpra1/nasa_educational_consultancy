@@ -21,8 +21,25 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
             floating: true,
             expandedHeight: MediaQuery.of(context).size.height * 0.33,
             flexibleSpace: FlexibleSpaceBar(
-              title: const Text('ABOUT US'),
-              background: Image.asset("asset/image/about_us.webp"),
+              title: Text(
+                'ABOUT US',
+                style: Theme.of(context)
+                    .textTheme
+                    .labelLarge
+                    ?.copyWith(color: Colors.white),
+              ),
+              background: Stack(
+                children: [
+                  Container(
+                    color: Colors.black54,
+                  ),
+                  SizedBox(
+                    height: double.infinity,
+                    width: double.infinity,
+                    child: Image.asset("asset/image/about_us.webp"),
+                  ),
+                ],
+              ),
             ),
           ),
           SliverToBoxAdapter(

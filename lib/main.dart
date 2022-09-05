@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nasa_educational_consultancy/screen/about_us_screen.dart';
+import 'package:nasa_educational_consultancy/screen/blog_screen.dart';
 import 'package:nasa_educational_consultancy/screen/contact_us_screen.dart';
 import 'package:nasa_educational_consultancy/screen/faq_screen.dart';
 import 'package:nasa_educational_consultancy/screen/map_screen.dart';
@@ -76,7 +77,7 @@ class _MyAppState extends State<MyApp> {
     ]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'गन्तव्य कर्णाली',
+      title: 'Nasa Education Consultancy',
       theme: ThemeData(
         colorScheme: AppTheme.colorScheme,
         fontFamily: AppTheme.fontFamilyPoppins,
