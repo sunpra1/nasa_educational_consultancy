@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:nasa_educational_consultancy/screen/root_screen.dart';
 
 class NasaSplashScreen extends StatefulWidget {
   static const String routeName = "/karnaliSplashScreen";
@@ -61,8 +62,7 @@ class _NasaSplashScreenState extends State<NasaSplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      //TODO
-      // Navigator.of(context).pushReplacementNamed("");
+      Navigator.of(context).pushReplacementNamed(RootScreen.routeName);
     });
   }
 }

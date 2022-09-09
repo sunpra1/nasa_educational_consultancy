@@ -5,6 +5,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../widgets/app_drawer.dart';
+
 class MapScreen extends StatefulWidget {
 
   static const routeName = "/mapScreen";
@@ -41,6 +43,8 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
+      drawer: const AppDrawer(),
       body: SizedBox(
         height: double.infinity,
         width: double.infinity,

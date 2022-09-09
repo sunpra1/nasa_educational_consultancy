@@ -5,6 +5,8 @@ import 'package:nasa_educational_consultancy/utils/app_theme.dart';
 import 'package:nasa_educational_consultancy/utils/utils.dart';
 import 'package:nasa_educational_consultancy/widgets/selectable_dialog.dart';
 
+import '../widgets/app_drawer.dart';
+
 class ContactUsScreen extends StatefulWidget {
 
   static const String routeName = "contactUsScreen";
@@ -61,6 +63,8 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
+      drawer: const AppDrawer(),
       body: SizedBox(
         height: double.infinity,
         width: double.infinity,

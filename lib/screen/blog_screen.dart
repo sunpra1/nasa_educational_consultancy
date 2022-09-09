@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/app_drawer.dart';
+
 class BlogScreen extends StatelessWidget {
   static const String routeName = "/blogScreen";
 
@@ -10,6 +12,7 @@ class BlogScreen extends StatelessWidget {
     List<Blog> blogs = Blog.getBlogs();
 
     return Scaffold(
+      drawer: const AppDrawer(),
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(

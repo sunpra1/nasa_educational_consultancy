@@ -21,8 +21,8 @@ class AppTheme {
 
   static LinearGradient gradientLR = LinearGradient(
     colors: [
-      HexColor("#ff343f"),
-      HexColor("#167bc3"),
+      Colors.blue.shade800,
+      Colors.blue,
     ],
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
@@ -31,8 +31,8 @@ class AppTheme {
   );
   static LinearGradient gradientTB = LinearGradient(
     colors: [
-      HexColor("#ff343f"),
-      HexColor("#167bc3"),
+      Colors.blue.shade800,
+      Colors.blue,
     ],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,

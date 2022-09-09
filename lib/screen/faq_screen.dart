@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nasa_educational_consultancy/utils/app_theme.dart';
 
+import '../widgets/app_drawer.dart';
+
 class FaqScreen extends StatelessWidget {
   static const String routeName = "/faqScreen";
 
@@ -11,6 +13,7 @@ class FaqScreen extends StatelessWidget {
     List<FAQ> faqs = FAQ.getSampleQuestion();
 
     return Scaffold(
+      drawer: const AppDrawer(),
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(

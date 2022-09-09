@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/app_drawer.dart';
+
 class AboutUsScreen extends StatefulWidget {
   static const String routeName = "/aboutUs";
 
@@ -13,6 +15,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const AppDrawer(),
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(

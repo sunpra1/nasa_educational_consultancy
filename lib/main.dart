@@ -3,12 +3,14 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nasa_educational_consultancy/provider/active_drawer_menu_provider.dart';
 import 'package:nasa_educational_consultancy/screen/about_us_screen.dart';
 import 'package:nasa_educational_consultancy/screen/blog_screen.dart';
 import 'package:nasa_educational_consultancy/screen/contact_us_screen.dart';
 import 'package:nasa_educational_consultancy/screen/faq_screen.dart';
 import 'package:nasa_educational_consultancy/screen/map_screen.dart';
 import 'package:nasa_educational_consultancy/screen/nasa_splash_screen.dart';
+import 'package:nasa_educational_consultancy/screen/root_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'provider/connectivity_provider.dart';
@@ -19,6 +21,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ConnectivityProvider()),
+        ChangeNotifierProvider(create: (_) => ActiveDrawerMenuProvider()),
       ],
       child: const MyApp(),
     ),
@@ -82,11 +85,9 @@ class _MyAppState extends State<MyApp> {
         colorScheme: AppTheme.colorScheme,
         fontFamily: AppTheme.fontFamilyPoppins,
       ),
-      home: const FaqScreen(),
+      home: const NasaSplashScreen(),
       routes: {
-        MapScreen.routeName: (_) => const MapScreen(),
-        ContactUsScreen.routeName: (_) => const ContactUsScreen(),
-        AboutUsScreen.routeName: (_) => const AboutUsScreen(),
+        RootScreen.routeName: (_) => const RootScreen(),
       },
     );
   }
