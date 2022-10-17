@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import '../model/multipart_file.dart';
 
 class APIRequest {
-  static String baseUrl = "103.140.1.187";
+  static String baseUrl = "www.nasazone.com.np";
   static const String _contentType = "Content-Type";
   static const String _contentTypeValue = "application/json; charset=utf-8";
 
@@ -58,7 +58,7 @@ class APIRequest {
             headers: _requiredHeaders, body: convert.jsonEncode(body));
         break;
     }
-    log("Response ${response.body}");
+    log("Response ---> ${response.body}");
     return convert.jsonDecode(response.body);
   }
 
@@ -81,7 +81,7 @@ class APIRequest {
     });
     http.StreamedResponse response = await request.send();
     String responseString = await response.stream.bytesToString();
-    log("Multipart Response: $responseString");
+    log("Multipart Response ---> $responseString");
     return convert.jsonDecode(responseString);
   }
 }
@@ -112,14 +112,17 @@ extension RequestTypeExt on RequestType {
   }
 }
 
-enum RequestEndPoint { contactUs }
+enum RequestEndPoint { contactUs, aboutUs }
 
 extension RequestEndPointExt on RequestEndPoint {
   String getValue({List<String> pathParams = const []}) {
     String value;
     switch (this) {
       case RequestEndPoint.contactUs:
-        value = "/contact_us";
+        value = "WebAPI/ContactUs";
+        break;
+      case RequestEndPoint.aboutUs:
+        value = "WebAPI/AboutUs";
         break;
     }
     return value;

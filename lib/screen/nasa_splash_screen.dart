@@ -26,7 +26,10 @@ class _NasaSplashScreenState extends State<NasaSplashScreen> {
             SizedBox(
               height: double.infinity,
               width: double.infinity,
-              child: Image.asset("asset/image/ripple_background.png"),
+              child: Image.asset(
+                "asset/image/ripple_background.png",
+                fit: BoxFit.fill,
+              ),
             ),
             Transform.translate(
               offset: const Offset(0, -50),

@@ -62,6 +62,10 @@ class AppDrawerMenu extends StatelessWidget {
         icon: Icons.info,
       ),
       Menu(
+        menuType: MenuType.contactUs,
+        icon: Icons.contact_phone,
+      ),
+      Menu(
         menuType: MenuType.blog,
         icon: Icons.newspaper,
       ),

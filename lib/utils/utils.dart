@@ -70,23 +70,81 @@ class Utils {
     navigatorState.pop();
   }
 
-  static Future<void> makeCall(String phoneNumber) async {
+  static Future<void> openLink(
+      BuildContext context,
+      String link
+      ) async {
+    Uri? url = Uri.tryParse(link);
+    if (url != null && await launcher.canLaunchUrl(url)) {
+      await launcher.launchUrl(url, mode: launcher.LaunchMode.externalNonBrowserApplication);
+    }else{
+      await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("FAILED"),
+          content: const Text("Unable to open link."),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"))
+          ],
+        ),
+      );
+    }
+  }
+
+  static Future<void> makeCall(BuildContext context, String phoneNumber) async {
     final Uri callLaunchUri = Uri(
       scheme: 'tel',
       path: phoneNumber,
     );
     if (await launcher.canLaunchUrl(callLaunchUri)) {
       await launcher.launchUrl(callLaunchUri);
+    }else{
+      await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("FAILED"),
+          content: const Text("Unable make phone call."),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"))
+          ],
+        ),
+      );
     }
   }
 
-  static Future<void> sendEmail(String email) async {
+  static Future<void> sendEmail(BuildContext context, String email) async {
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
       path: email,
     );
     if (await launcher.canLaunchUrl(emailLaunchUri)) {
       await launcher.launchUrl(emailLaunchUri);
+    }else{
+      await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("FAILED"),
+          content: const Text("Unable to launch mail app. Provided email may not be valid."),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"))
+          ],
+        ),
+      );
     }
   }
 }
