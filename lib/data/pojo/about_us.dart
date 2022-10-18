@@ -10,10 +10,9 @@ class AboutUs {
   const AboutUs(
       {required this.aboutUsId, required this.type, required this.details});
 
-  factory AboutUs.fromJson(Map<String, dynamic> json) {
-    return AboutUs(
+  factory AboutUs.fromJson(Map<String, dynamic> json) => AboutUs(
         aboutUsId: json[aboutUsIdKey],
         type: json[typeKey],
-        details: json[detailsKey]);
-  }
+        details: json[detailsKey],
+      );
 }

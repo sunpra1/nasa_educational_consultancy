@@ -8,7 +8,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../widgets/app_drawer.dart';
 
 class MapScreen extends StatefulWidget {
-
   static const routeName = "/mapScreen";
 
   const MapScreen({Key? key}) : super(key: key);
@@ -18,7 +17,6 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-
   double lat = 27.750165405127756;
   double lng = 85.3607682;
 
@@ -51,7 +49,7 @@ class _MapScreenState extends State<MapScreen> {
         child: GoogleMap(
           gestureRecognizers: {
             Factory<OneSequenceGestureRecognizer>(
-                  () => EagerGestureRecognizer(),
+              () => EagerGestureRecognizer(),
             ),
           },
           onMapCreated: (controller) {

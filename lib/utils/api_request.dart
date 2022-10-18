@@ -112,7 +112,7 @@ extension RequestTypeExt on RequestType {
   }
 }
 
-enum RequestEndPoint { contactUs, aboutUs }
+enum RequestEndPoint { contactUs, aboutUs, faq }
 
 extension RequestEndPointExt on RequestEndPoint {
   String getValue({List<String> pathParams = const []}) {
@@ -123,6 +123,9 @@ extension RequestEndPointExt on RequestEndPoint {
         break;
       case RequestEndPoint.aboutUs:
         value = "WebAPI/AboutUs";
+        break;
+        case RequestEndPoint.faq:
+        value = "WebAPI/FAQ";
         break;
     }
     return value;

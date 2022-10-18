@@ -58,26 +58,24 @@ class ContactUs {
     required this.logo,
   });
 
-  factory ContactUs.fromJson(Map<String, dynamic> json) {
-    return ContactUs(
-      companyId: json[companyIdKey],
-      supportNumber: json[supportNumberKey],
-      address: json[addressKey],
-      email: json[emailKey],
-      location: json[locationKey],
-      name: json[nameKey],
-      phoneNumber: json[phoneNumberKey],
-      cellNumber: json[cellNumberKey],
-      socialNumber: json[supportNumberKey],
-      faceBook: json[faceBookKey],
-      youtube: json[youtubeKey],
-      instagram: json[instagramKey],
-      twitterLink: json[twitterLinkKey],
-      supportEmail: json[supportEmailKey],
-      enquiryEmail: json[enquiryEmailKey],
-      linkedIn: json[linkedInKey],
-      googleMap: json[googleMapKey],
-      logo: json[logoKey],
-    );
-  }
+  factory ContactUs.fromJson(Map<String, dynamic> json) => ContactUs(
+        companyId: json[companyIdKey],
+        supportNumber: json[supportNumberKey],
+        address: json[addressKey],
+        email: json[emailKey],
+        location: json[locationKey],
+        name: json[nameKey],
+        phoneNumber: json[phoneNumberKey],
+        cellNumber: json[cellNumberKey],
+        socialNumber: json[supportNumberKey],
+        faceBook: json[faceBookKey],
+        youtube: json[youtubeKey],
+        instagram: json[instagramKey],
+        twitterLink: json[twitterLinkKey],
+        supportEmail: json[supportEmailKey],
+        enquiryEmail: json[enquiryEmailKey],
+        linkedIn: json[linkedInKey],
+        googleMap: json[googleMapKey],
+        logo: json[logoKey],
+      );
 }
