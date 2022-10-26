@@ -78,7 +78,9 @@ flutter:
     - asset/image/blog.png
     - asset/image/contact_us.png
     - asset/image/faq.png
+    - asset/image/login.webp
     - asset/image/nasa_logo.png
+    - asset/image/register.png
     - asset/image/ripple_background.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

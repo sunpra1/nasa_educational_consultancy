@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../data/pojo/user.dart';
 import '../model/menu.dart';
 import '../provider/active_drawer_menu_provider.dart';
+import '../provider/user_provider.dart';
+import '../screen/login_screen.dart';
 import '../utils/app_theme.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -38,11 +41,83 @@ class AppDrawer extends StatelessWidget {
 class AppDrawerBanner extends StatelessWidget {
   const AppDrawerBanner({Key? key}) : super(key: key);
 
+  void _handleLoginBtnClick(BuildContext context) {
+    Navigator.of(context).pushNamed(LoginScreen.routeName);
+  }
+
+  void _handleProfileBtnClick(BuildContext context) {}
+
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
-      height: 150,
-      width: double.infinity,
+    User? user = context.watch<UserProvider>().loggedInUser;
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 16.0,
+        right: 16.0,
+        top: 8.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 120,
+            width: 120,
+            child: CircleAvatar(
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Image.asset("asset/image/nasa_logo.png"),
+              ),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Nasa Educational Consultancy",
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(color: Colors.white),
+              ),
+              (user != null && user.firstName.isNotEmpty)
+                  ? Text(
+                      "${user.firstName} ${user.lastName}",
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            color: Colors.white,
+                          ),
+                    )
+                  : (user != null)
+                      ? Text(
+                          user.userName,
+                          style:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    color: Colors.white,
+                                  ),
+                        )
+                      : const SizedBox.shrink(),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        Theme.of(context).colorScheme.inversePrimary),
+                    minimumSize: MaterialStateProperty.all(const Size(60, 36)),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24)))),
+                onPressed: () => user == null
+                    ? _handleLoginBtnClick(context)
+                    : _handleProfileBtnClick(context),
+                child: Text(
+                  user == null ? "LOGIN" : "PROFILE",
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelSmall
+                      ?.copyWith(color: Theme.of(context).colorScheme.primary),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

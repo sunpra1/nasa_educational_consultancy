@@ -102,17 +102,17 @@ extension RequestTypeExt on RequestType {
         value = "GET";
         break;
       case RequestType.post:
-       value = "POST";
+        value = "POST";
         break;
       case RequestType.delete:
-       value = "DELETE";
+        value = "DELETE";
         break;
     }
     return value;
   }
 }
 
-enum RequestEndPoint { contactUs, aboutUs, faq }
+enum RequestEndPoint { login, register, contactUs, aboutUs, faq }
 
 extension RequestEndPointExt on RequestEndPoint {
   String getValue({List<String> pathParams = const []}) {
@@ -124,8 +124,14 @@ extension RequestEndPointExt on RequestEndPoint {
       case RequestEndPoint.aboutUs:
         value = "WebAPI/AboutUs";
         break;
-        case RequestEndPoint.faq:
+      case RequestEndPoint.faq:
         value = "WebAPI/FAQ";
+        break;
+      case RequestEndPoint.login:
+        value = "Account/apiLogin";
+        break;
+      case RequestEndPoint.register:
+        value = "Account/apiRegister";
         break;
     }
     return value;
