@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,14 +15,16 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User? user = context.watch<UserProvider>().loggedInUser;
+
     return SafeArea(
       child: Drawer(
         child: Container(
           decoration: AppTheme.backgroundGradient,
           child: Column(
-            children: const [
-              AppDrawerBanner(),
-              Padding(
+            children: [
+              const AppDrawerBanner(),
+              const Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: 24.0,
                   vertical: 12.0,
@@ -29,7 +33,8 @@ class AppDrawer extends StatelessWidget {
                   color: Colors.black45,
                 ),
               ),
-              AppDrawerMenu(),
+              const AppDrawerMenu(),
+              if (user != null) const LogoutButton(),
             ],
           ),
         ),
@@ -50,6 +55,7 @@ class AppDrawerBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     User? user = context.watch<UserProvider>().loggedInUser;
+    log("Here: ${user != null}");
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -80,22 +86,22 @@ class AppDrawerBanner extends StatelessWidget {
                     .titleLarge
                     ?.copyWith(color: Colors.white),
               ),
-              (user != null && user.firstName.isNotEmpty)
+              (user != null && user.userName.isNotEmpty)
                   ? Text(
-                      "${user.firstName} ${user.lastName}",
+                user.userName,
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
                             color: Colors.white,
                           ),
                     )
                   : (user != null)
-                      ? Text(
-                          user.userName,
-                          style:
-                              Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    color: Colors.white,
-                                  ),
-                        )
-                      : const SizedBox.shrink(),
+                  ? Text(
+                user.userName,
+                style:
+                Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: Colors.white,
+                ),
+              )
+                  : const SizedBox.shrink(),
               ElevatedButton(
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
@@ -174,7 +180,7 @@ class AppDrawerMenuItem extends StatelessWidget {
     MenuType activeMenu =
         context.watch<ActiveDrawerMenuProvider>().activeDrawerMenuType;
     Color backGroundColor =
-        activeMenu == menu.menuType ? Colors.black12 : Colors.transparent;
+    activeMenu == menu.menuType ? Colors.black12 : Colors.transparent;
 
     return Material(
       color: backGroundColor,
@@ -196,6 +202,50 @@ class AppDrawerMenuItem extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 24.0),
                   child: Text(
                     menu.menuType.value,
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium
+                        ?.copyWith(color: Colors.white),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class LogoutButton extends StatelessWidget {
+  const LogoutButton({Key? key}) : super(key: key);
+
+  void _handleOnAppDrawerMenuItemClick(BuildContext context) {
+    context.read<UserProvider>().setLoggedInUser(null);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _handleOnAppDrawerMenuItemClick(context),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.logout,
+                size: 16,
+                color: Colors.white,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 24.0),
+                  child: Text(
+                    "Logout",
                     style: Theme.of(context)
                         .textTheme
                         .labelMedium

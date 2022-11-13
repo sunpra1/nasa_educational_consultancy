@@ -5,6 +5,7 @@ import '../../model/gender.dart';
 class User {
   static const userIdKey = "userId";
   static const userNameKey = "userName";
+  static const emailKey = "email";
   static const firstNameKey = "firstName";
   static const lastNameKey = "lastName";
   static const mobileNumberKey = "mobileNumber";
@@ -23,6 +24,7 @@ class User {
 
   String userId = "";
   String userName = "";
+  String email = "";
   String firstName = "";
   String lastName = "";
   String mobileNumber = "";
@@ -41,6 +43,7 @@ class User {
   User({
     required this.userId,
     required this.userName,
+    required this.email,
     required this.firstName,
     required this.lastName,
     required this.mobileNumber,
@@ -61,6 +64,7 @@ class User {
     return User(
       userId: map[userIdKey] ?? "",
       userName: map[userNameKey] ?? "",
+      email: map[emailKey] ?? "",
       firstName: map[firstNameKey] ?? "",
       lastName: map[lastNameKey] ?? "",
       mobileNumber: map[mobileNumberKey] ?? "",
@@ -82,6 +86,7 @@ class User {
     return {
       userIdKey: userId,
       userNameKey: userName,
+      email: email,
       firstNameKey: firstName,
       mobileNumberKey: mobileNumber,
       lastNameKey: lastName,

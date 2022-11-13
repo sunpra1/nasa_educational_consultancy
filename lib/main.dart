@@ -89,8 +89,8 @@ class _MyAppState extends State<MyApp> {
         colorScheme: AppTheme.colorScheme,
         fontFamily: AppTheme.fontFamilyPoppins,
       ),
-      home: const NasaSplashScreen(),
       routes: {
+        "/": (_) => const NasaSplashScreen(),
         AboutUsScreen.routeName: (_) => const AboutUsScreen(),
         BlogScreen.routeName: (_) => const BlogScreen(),
         ContactUsScreen.routeName: (_) => const ContactUsScreen(),

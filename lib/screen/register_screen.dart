@@ -2,12 +2,16 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nasa_educational_consultancy/data/pojo/api_response.dart';
+import 'package:nasa_educational_consultancy/screen/root_screen.dart';
+import 'package:nasa_educational_consultancy/utils/show_toast.dart';
+import 'package:nasa_educational_consultancy/utils/utils.dart';
 import 'package:provider/provider.dart';
 
-import '../data/pojo/auth_body.dart';
+import '../data/pojo/register_body.dart';
 import '../data/pojo/user.dart';
+import '../data/repository.dart';
 import '../provider/user_provider.dart';
-import '../utils/api_request.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/gradient_button.dart';
 import '../widgets/progress_dialog.dart';
@@ -22,17 +26,23 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  static const userNameKey = "userName";
   static const emailKey = "email";
+  static const phoneNumberKey = "phoneNumber";
   static const passwordKey = "password";
   static const confirmPasswordKey = "cPassword";
 
   bool isPasswordEnabled = true;
 
+  TextEditingController userNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController cPasswordController = TextEditingController();
 
+  FocusNode userNameFocusNode = FocusNode();
   FocusNode emailFocusNode = FocusNode();
+  FocusNode phoneNumberFocusNode = FocusNode();
   FocusNode passwordFocusNode = FocusNode();
   FocusNode cPasswordFocusNode = FocusNode();
 
@@ -41,13 +51,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void dispose() {
     super.dispose();
+    userNameFocusNode.dispose();
     emailFocusNode.dispose();
+    phoneNumberFocusNode.dispose();
     passwordFocusNode.dispose();
     cPasswordFocusNode.dispose();
 
+    userNameController.dispose();
     emailController.dispose();
+    phoneNumberController.dispose();
     passwordController.dispose();
     cPasswordController.dispose();
+  }
+
+  bool _validateUserName({bool displayError = true}) {
+    _clearError(userNameKey);
+    bool isValid = true;
+    String value = userNameController.value.text;
+    if (value.isEmpty) {
+      formErrors[userNameKey] = "Username is required.";
+      isValid = false;
+    }
+    if (displayError && formErrors.containsKey(userNameKey)) {
+      setState(() {});
+    }
+    return isValid;
   }
 
   bool _validateEmail({bool displayError = true}) {
@@ -69,6 +97,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return isValid;
   }
 
+  bool _validatePhoneNumber({bool displayError = true}) {
+    _clearError(phoneNumberKey);
+    bool isValid = true;
+    String value = phoneNumberController.value.text;
+    if (value.isEmpty) {
+      formErrors[phoneNumberKey] = "Phone number is required.";
+      isValid = false;
+    } else if (value.length != 10) {
+      formErrors[phoneNumberKey] = "Phone number must be 10 characters long.";
+      isValid = false;
+    }
+    if (displayError && formErrors.containsKey(phoneNumberKey)) {
+      setState(() {});
+    }
+    return isValid;
+  }
+
   bool _validatePassword({bool displayError = true}) {
     _clearError(passwordKey);
     bool isValid = true;
@@ -81,10 +126,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           "Password must be at-least six characters long.";
       isValid = false;
     } else if (!RegExp(
-            r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$&*~]).{6,}$")
+        r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$&*~]).{6,}$")
         .hasMatch(value)) {
       formErrors[passwordKey] =
-          "Password must al-least contain one uppercase letter, one special character, and one number.";
+      "Password must al-least contain one uppercase letter, one special character, and one number.";
       isValid = false;
     }
     if (displayError && formErrors.containsKey(passwordKey)) {
@@ -103,17 +148,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
       isValid = false;
     } else if (value.length < 6) {
       formErrors[confirmPasswordKey] =
-          "Password must be at-least six characters long.";
+      "Password must be at-least six characters long.";
       isValid = false;
     } else if (!RegExp(
-            r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$&*~]).{6,}$")
+        r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$&*~]).{6,}$")
         .hasMatch(value)) {
       formErrors[confirmPasswordKey] =
-          "Password must at-least contain one uppercase and lowercase letter, one special character, and one number.";
+      "Password must at-least contain one uppercase and lowercase letter, one special character, and one number.";
       isValid = false;
     } else if (value != password) {
       formErrors[confirmPasswordKey] =
-          "Confirm password doesn't match with password.";
+      "Confirm password doesn't match with password.";
       isValid = false;
     }
     if (displayError && formErrors.containsKey(confirmPasswordKey)) {
@@ -124,7 +169,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool _validate() {
     bool isValid = true;
+    if (!_validateUserName(displayError: false)) {
+      isValid = false;
+    }
     if (!_validateEmail(displayError: false)) {
+      isValid = false;
+    }
+    if (!_validatePhoneNumber(displayError: false)) {
       isValid = false;
     }
     if (!_validatePassword(displayError: false)) {
@@ -152,32 +203,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _onFormSubmitted(BuildContext context) async {
     NavigatorState navigatorState = Navigator.of(context);
     UserProvider userProvider = context.read<UserProvider>();
+    ShowToast showToast = ShowToast(context: context);
     if (_validate()) {
       showDialog(
         context: context,
         builder: (_) => const ProgressDialog(message: "LOADING..."),
         barrierDismissible: false,
       );
-      AuthBody body = AuthBody(
+      RegisterBody body = RegisterBody(
+        userName: userNameController.text,
         email: emailController.text,
+        phoneNumber: phoneNumberController.text,
         password: passwordController.text,
-        authType: AuthType.register,
       );
-      dynamic response = await APIRequest(
-              requestType: RequestType.post,
-              requestEndPoint: RequestEndPoint.register,
-              body: body.toMap())
-          .make();
+      ApiResponse response = await Repository.register(body);
       navigatorState.pop();
       if (response.success) {
         userProvider.setLoggedInUser(
           User.fromMap({
-            "userName": body.email,
-            "roleName": UserRole.user,
-            "token": response.data,
+            User.userNameKey: body.userName,
+            User.emailKey: body.email,
+            User.mobileNumberKey: body.phoneNumber
           }),
         );
-        navigatorState.popUntil(ModalRoute.withName("/"));
+        showToast.show("Registration success.");
+        navigatorState.popUntil(ModalRoute.withName(RootScreen.routeName));
       } else {
         showDialog(
           barrierDismissible: false,
@@ -220,7 +270,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image:
-                              Image.asset("asset/image/register.png").image,
+                          Image.asset("asset/image/register.png").image,
                         ),
                         boxShadow: const [
                           BoxShadow(
@@ -250,6 +300,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               Focus(
                                 onFocusChange: (hasFocus) {
                                   if (hasFocus) {
+                                    _clearError(userNameKey);
+                                  } else {
+                                    _validateUserName();
+                                  }
+                                },
+                                child: TextFormField(
+                                  controller: userNameController,
+                                  focusNode: userNameFocusNode,
+                                  decoration: InputDecoration(
+                                    errorText: formErrors[userNameKey],
+                                    errorMaxLines: 2,
+                                    contentPadding: const EdgeInsets.only(
+                                        left: 12, right: 12),
+                                    border: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(1.0),
+                                      ),
+                                    ),
+                                    labelText: "Username",
+                                    labelStyle: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.copyWith(color: Colors.grey.shade600),
+                                  ),
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.next,
+                                  onFieldSubmitted: (_) =>
+                                      FocusScope.of(context)
+                                          .requestFocus(emailFocusNode),
+                                ),
+                              ),
+                              const SizedBox(height: 18.0),
+                              Focus(
+                                onFocusChange: (hasFocus) {
+                                  if (hasFocus) {
                                     _clearError(emailKey);
                                   } else {
                                     _validateEmail();
@@ -275,6 +360,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         ?.copyWith(color: Colors.grey.shade600),
                                   ),
                                   keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.next,
+                                  onFieldSubmitted: (_) =>
+                                      FocusScope.of(context)
+                                          .requestFocus(phoneNumberFocusNode),
+                                ),
+                              ),
+                              const SizedBox(height: 18.0),
+                              Focus(
+                                onFocusChange: (hasFocus) {
+                                  if (hasFocus) {
+                                    _clearError(phoneNumberKey);
+                                  } else {
+                                    _validateEmail();
+                                  }
+                                },
+                                child: TextFormField(
+                                  controller: phoneNumberController,
+                                  focusNode: phoneNumberFocusNode,
+                                  decoration: InputDecoration(
+                                    errorText: formErrors[phoneNumberKey],
+                                    errorMaxLines: 2,
+                                    contentPadding: const EdgeInsets.only(
+                                        left: 12, right: 12),
+                                    border: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(1.0),
+                                      ),
+                                    ),
+                                    labelText: "Phone Number",
+                                    labelStyle: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.copyWith(color: Colors.grey.shade600),
+                                  ),
+                                  maxLength: 10,
+                                  keyboardType: TextInputType.number,
                                   textInputAction: TextInputAction.next,
                                   onFieldSubmitted: (_) =>
                                       FocusScope.of(context)
@@ -312,16 +433,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       onPressed: () {
                                         setState(() {
                                           isPasswordEnabled =
-                                              !isPasswordEnabled;
+                                          !isPasswordEnabled;
                                         });
                                       },
                                       icon: isPasswordEnabled
                                           ? Icon(
-                                              const FaIcon(FontAwesomeIcons.eye)
-                                                  .icon)
+                                          const FaIcon(FontAwesomeIcons.eye)
+                                              .icon)
                                           : Icon(const FaIcon(
-                                                  FontAwesomeIcons.eyeSlash)
-                                              .icon),
+                                          FontAwesomeIcons.eyeSlash)
+                                          .icon),
                                     ),
                                   ),
                                   obscureText: isPasswordEnabled,
@@ -363,16 +484,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       onPressed: () {
                                         setState(() {
                                           isPasswordEnabled =
-                                              !isPasswordEnabled;
+                                          !isPasswordEnabled;
                                         });
                                       },
                                       icon: isPasswordEnabled
                                           ? Icon(
-                                              const FaIcon(FontAwesomeIcons.eye)
-                                                  .icon)
+                                          const FaIcon(FontAwesomeIcons.eye)
+                                              .icon)
                                           : Icon(const FaIcon(
-                                                  FontAwesomeIcons.eyeSlash)
-                                              .icon),
+                                          FontAwesomeIcons.eyeSlash)
+                                          .icon),
                                     ),
                                   ),
                                   obscureText: isPasswordEnabled,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
@@ -56,9 +57,7 @@ class Utils {
   ) async {
     NavigatorState navigatorState = Navigator.of(context);
     showDialog(
-        context: context,
-        builder: (_) =>
-            const ProgressDialog(message: ""));
+        context: context, builder: (_) => const ProgressDialog(message: ""));
     Position? position = await getCurrentLocation(context);
     if (position != null) {
       Uri? url = Uri.tryParse(
@@ -70,14 +69,12 @@ class Utils {
     navigatorState.pop();
   }
 
-  static Future<void> openLink(
-      BuildContext context,
-      String link
-      ) async {
+  static Future<void> openLink(BuildContext context, String link) async {
     Uri? url = Uri.tryParse(link);
     if (url != null && await launcher.canLaunchUrl(url)) {
-      await launcher.launchUrl(url, mode: launcher.LaunchMode.externalNonBrowserApplication);
-    }else{
+      await launcher.launchUrl(url,
+          mode: launcher.LaunchMode.externalNonBrowserApplication);
+    } else {
       await showDialog(
         barrierDismissible: false,
         context: context,
@@ -103,7 +100,7 @@ class Utils {
     );
     if (await launcher.canLaunchUrl(callLaunchUri)) {
       await launcher.launchUrl(callLaunchUri);
-    }else{
+    } else {
       await showDialog(
         barrierDismissible: false,
         context: context,
@@ -129,13 +126,14 @@ class Utils {
     );
     if (await launcher.canLaunchUrl(emailLaunchUri)) {
       await launcher.launchUrl(emailLaunchUri);
-    }else{
+    } else {
       await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (_) => AlertDialog(
           title: const Text("FAILED"),
-          content: const Text("Unable to launch mail app. Provided email may not be valid."),
+          content: const Text(
+              "Unable to launch mail app. Provided email may not be valid."),
           actions: [
             TextButton(
                 onPressed: () {

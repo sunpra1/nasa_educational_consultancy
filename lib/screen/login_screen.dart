@@ -4,14 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../data/pojo/auth_body.dart';
+import '../data/pojo/login_body.dart';
 import '../data/pojo/user.dart';
+import '../data/repository.dart';
 import '../provider/user_provider.dart';
-import '../utils/api_request.dart';
+import '../utils/show_toast.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/gradient_button.dart';
 import '../widgets/progress_dialog.dart';
 import 'register_screen.dart';
+import 'root_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = "/loginScreen";
@@ -25,13 +27,16 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   static const passwordKey = "password";
   static const userNameKey = "userName";
+  static const emailKey = "email";
 
   bool isPasswordEnabled = true;
 
-  TextEditingController usernameController = TextEditingController();
+  TextEditingController userNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
 
   FocusNode usernameFocusNode = FocusNode();
+  FocusNode emailFocusNode = FocusNode();
   FocusNode passwordFocusNode = FocusNode();
 
   HashMap<String, String> formErrors = HashMap<String, String>();
@@ -40,26 +45,42 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     super.dispose();
     usernameFocusNode.dispose();
+    emailFocusNode.dispose();
     passwordFocusNode.dispose();
 
-    usernameController.dispose();
+    userNameController.dispose();
     passwordController.dispose();
+    emailController.dispose();
   }
 
-  bool _validateUsername({bool displayError = true}) {
+  bool _validateUserName({bool displayError = true}) {
     _clearError(userNameKey);
     bool isValid = true;
-    String value = usernameController.value.text;
+    String value = userNameController.value.text;
     if (value.isEmpty) {
       formErrors[userNameKey] = "Username is required.";
+      isValid = false;
+    }
+    if (displayError && formErrors.containsKey(userNameKey)) {
+      setState(() {});
+    }
+    return isValid;
+  }
+
+  bool _validateEmail({bool displayError = true}) {
+    _clearError(emailKey);
+    bool isValid = true;
+    String value = emailController.value.text;
+    if (value.isEmpty) {
+      formErrors[emailKey] = "Email is required.";
       isValid = false;
     } else if (!(RegExp(
             r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$")
         .hasMatch(value))) {
-      formErrors[userNameKey] = "Username must be valid email";
+      formErrors[emailKey] = "Invalid email address.";
       isValid = false;
     }
-    if (displayError && formErrors.containsKey(userNameKey)) {
+    if (displayError && formErrors.containsKey(emailKey)) {
       setState(() {});
     }
     return isValid;
@@ -91,7 +112,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool _validate() {
     bool isValid = true;
-    if (!_validateUsername(displayError: false)) {
+    if (!_validateUserName(displayError: false)) {
+      isValid = false;
+    }
+    if (!_validateEmail(displayError: false)) {
       isValid = false;
     }
     if (!_validatePassword(displayError: false)) {
@@ -120,26 +144,30 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _onFormSubmitted(BuildContext context) async {
     NavigatorState navigatorState = Navigator.of(context);
     UserProvider userProvider = context.read<UserProvider>();
+    ShowToast showToast = ShowToast(context: context);
     if (_validate()) {
       showDialog(
         context: context,
         builder: (_) => const ProgressDialog(message: "LOADING..."),
         barrierDismissible: false,
       );
-      AuthBody body = AuthBody(
-        email: usernameController.text,
+      LoginBody body = LoginBody(
+        userName: userNameController.text,
+        email: userNameController.text,
         password: passwordController.text,
-        authType: AuthType.login,
       );
-      dynamic response = await APIRequest(
-              requestType: RequestType.post,
-              requestEndPoint: RequestEndPoint.login,
-              body: body.toMap())
-          .make();
+      dynamic response = await Repository.login(body);
       navigatorState.pop();
       if (response.success) {
+        userProvider.setLoggedInUser(
+          User.fromMap({
+            User.userNameKey: body.userName,
+            User.emailKey: body.email,
+          }),
+        );
         userProvider.setLoggedInUser(User.fromMap(response.data));
-        navigatorState.popUntil(ModalRoute.withName("/"));
+        showToast.show("Login success.");
+        navigatorState.popUntil(ModalRoute.withName(RootScreen.routeName));
       } else {
         showDialog(
           barrierDismissible: false,
@@ -214,14 +242,49 @@ class _LoginScreenState extends State<LoginScreen> {
                                   if (hasFocus) {
                                     _clearError(userNameKey);
                                   } else {
-                                    _validateUsername();
+                                    _validateEmail();
                                   }
                                 },
                                 child: TextFormField(
-                                  controller: usernameController,
+                                  controller: userNameController,
                                   focusNode: usernameFocusNode,
                                   decoration: InputDecoration(
                                     errorText: formErrors[userNameKey],
+                                    errorMaxLines: 2,
+                                    contentPadding: const EdgeInsets.only(
+                                        left: 12, right: 12),
+                                    border: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(1.0),
+                                      ),
+                                    ),
+                                    labelText: "Username",
+                                    labelStyle: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.copyWith(color: Colors.grey.shade600),
+                                  ),
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.next,
+                                  onFieldSubmitted: (_) =>
+                                      FocusScope.of(context)
+                                          .requestFocus(emailFocusNode),
+                                ),
+                              ),
+                              const SizedBox(height: 18.0),
+                              Focus(
+                                onFocusChange: (hasFocus) {
+                                  if (hasFocus) {
+                                    _clearError(emailKey);
+                                  } else {
+                                    _validateEmail();
+                                  }
+                                },
+                                child: TextFormField(
+                                  controller: emailController,
+                                  focusNode: emailFocusNode,
+                                  decoration: InputDecoration(
+                                    errorText: formErrors[emailKey],
                                     errorMaxLines: 2,
                                     contentPadding: const EdgeInsets.only(
                                         left: 12, right: 12),
@@ -240,7 +303,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   textInputAction: TextInputAction.next,
                                   onFieldSubmitted: (_) =>
                                       FocusScope.of(context)
-                                          .requestFocus(usernameFocusNode),
+                                          .requestFocus(passwordFocusNode),
                                 ),
                               ),
                               const SizedBox(height: 18.0),

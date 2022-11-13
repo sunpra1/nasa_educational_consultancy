@@ -23,7 +23,7 @@ class RootScreen extends StatelessWidget {
     Widget page;
     switch (selectedMenu) {
       case MenuType.home:
-        page = const MapScreen();
+        page = const BlogScreen();
         break;
       case MenuType.aboutUs:
         page = const AboutUsScreen();
