@@ -1,4 +1,4 @@
-import 'EnumValue.dart';
+import 'enum_value.dart';
 
 enum BlogType{
   faq, none
